@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <style>
+        body {
+            background-image: url('../static/images/h3.jpeg');
+            background-size: cover;
+            background-position: center;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .form-box {
+            background: white;
+            padding: 20px 25px;
+            width: 340px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .form-box h2 {
+            color: #00695c;
+            margin-bottom: 18px;
+        }
+        input[type="text"], input[type="email"], input[type="password"] {
+            width: 250px;
+            padding: 8px;
+            margin: 8px 0;
+            border: 2px solid #26a69a;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        input:focus {
+            border-color: #00897b;
+            outline: none;
+        }
+        button {
+            padding: 9px 20px;
+            background: #26a69a;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+        button:hover {
+            background: #00897b;
+        }
+        a {
+            display: block;
+            margin-top: 12px;
+            color: #00897b;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .flash {
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-box">
+        <h2>Register</h2>
+
+        <!-- ✅ Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST" onsubmit="return validatePassword()">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" id="password" name="password" placeholder="Password" required>
+            <small id="passwordHelp" style="color: red; display: none;">
+                Password must contain at least 8 characters, including uppercase, lowercase, number, and special character.
+            </small>
+            <button type="submit">Register</button>
+        </form>
+
+        <a href="/login">Already have an account? Login</a>
+    </div>
+
+    <script>
+      function validatePassword() {
+        const password = document.getElementById('password').value;
+        const message = document.getElementById('passwordHelp');
+        
+        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&^])[A-Za-z\d@$!%*#?&^]{8,}$/;
+        
+        if (!regex.test(password)) {
+          message.style.display = 'block';
+          return false;
+        }
+
+        message.style.display = 'none';
+        return true;
+      }
+    </script>
+</body>
+</html>

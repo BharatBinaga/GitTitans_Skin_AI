@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Skin Disease Detection</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .sidebar {
+      width: 280px; min-height: 100vh;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 2rem 0; position: fixed; z-index: 1000;
+    }
+
+    .sidebar-header { padding: 0 2rem 2rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 2rem; }
+    .sidebar-header h2 { color: white; font-size: 1.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
+    
+    .sidebar a {
+      display: flex; align-items: center; gap: 1rem; padding: 1rem 2rem;
+      color: rgba(255, 255, 255, 0.8); font-size: 15px; text-decoration: none;
+      transition: all 0.3s ease; border: none; font-weight: 500;
+    }
+    .sidebar a:hover { background: rgba(255, 255, 255, 0.1); color: white; transform: translateX(5px); }
+    .sidebar a i { width: 20px; text-align: center; font-size: 18px; }
+
+    .main-content { margin-left: 280px; padding: 2rem; width: calc(100% - 280px); min-height: 100vh; }
+
+    .container {
+      background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);
+      padding: 3rem; border-radius: 24px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2); max-width: 1000px; margin: 0 auto;
+    }
+
+    h1.title {
+      font-size: 2.5rem; font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      text-align: center; margin-bottom: 3rem; display: flex; align-items: center; justify-content: center; gap: 1rem;
+    }
+
+    /* UPLOAD SECTION ALIGNMENT */
+    .upload-section {
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      border-radius: 20px; padding: 2rem; margin-bottom: 2rem;
+      border: 2px dashed #cbd5e1; transition: all 0.3s ease;
+    }
+    .upload-section:hover { border-color: #667eea; }
+
+    .upload-col {
+      display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 2rem;
+    }
+    .divider-col { border-right: 2px dashed #cbd5e1; }
+    @media (max-width: 768px) { .divider-col { border-right: none; border-bottom: 2px dashed #cbd5e1; } }
+
+    .form-group input[type="file"] {
+      border: none; padding: 1.5rem; border-radius: 16px; background: white;
+      font-size: 16px; transition: all 0.3s ease; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); width: 100%; max-width: 320px; margin: 0 auto;
+    }
+    .form-group input[type="file"]:focus { outline: none; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+
+    .btn-primary {
+      padding: 1rem 2rem; font-size: 16px; font-weight: 600;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white; border: none; border-radius: 16px; transition: all 0.3s ease;
+      display: inline-flex; align-items: center; gap: 0.5rem; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4); }
+
+    .result, .doctor-info {
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      border-radius: 20px; padding: 2rem; margin-top: 2rem;
+      border-left: 4px solid #0ea5e9; box-shadow: 0 8px 25px rgba(14, 165, 233, 0.1);
+    }
+    .result h3, .doctor-info h3, .doctor-info h4 { color: #0c4a6e; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+
+    .uploaded-image { text-align: center; margin-top: 2rem; }
+    .uploaded-image img { margin-top: 1rem; border-radius: 20px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); max-width: 100%; height: auto; }
+
+    .patient-form {
+      background: linear-gradient(135deg, #fef7ff 0%, #f3e8ff 100%);
+      border-radius: 20px; padding: 2rem; margin-top: 2rem; border-left: 4px solid #a855f7;
+    }
+    .patient-form input[type="text"] {
+      border: 2px solid #e5e7eb; border-radius: 12px; padding: 1rem; font-size: 16px; background: white; transition: all 0.3s ease; width: 100%;
+    }
+    .patient-form input[type="text"]:focus { border-color: #a855f7; outline: none; box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1); }
+
+    .alert { border-radius: 16px; border: none; padding: 1.5rem; font-weight: 500; display: flex; align-items: center; gap: 1rem; }
+    .alert-info { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); color: #1e40af; }
+    .alert-danger { background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); color: #dc2626; }
+
+    .doctor-card {
+      background: white; border-radius: 16px; padding: 1.5rem; margin-bottom: 1rem;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08); border-left: 4px solid #10b981;
+    }
+    .doctor-card p { margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+
+    .product-list { background: white; border-radius: 16px; padding: 1.5rem; margin: 1rem 0; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); }
+    .product-list ul { list-style: none; padding: 0; }
+    .product-list li { padding: 0.75rem 0; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; gap: 0.5rem; }
+    .product-list li:last-child { border-bottom: none; }
+
+    .test-form {
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+      border-radius: 20px; padding: 2rem; margin-top: 2rem; border-left: 4px solid #22c55e;
+    }
+    .test-form select {
+      border: 2px solid #e5e7eb; border-radius: 12px; padding: 0.75rem; font-size: 16px; background: white; width: 100%; transition: all 0.3s ease;
+    }
+    .test-form select:focus { border-color: #22c55e; outline: none; box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1); }
+
+    .confidence-score {
+      display: inline-flex; align-items: center; gap: 0.5rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white; padding: 0.5rem 1rem; border-radius: 50px; font-weight: 600; font-size: 14px;
+    }
+
+    .result-box {
+      background: linear-gradient(135deg, #f9fafc, #eef1f5); padding: 35px; border-radius: 20px;
+      margin-bottom: 30px; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15); font-size: 1.15rem; color: #333; transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .result-box:hover { transform: translateY(-5px); box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25); }
+    .result-box h3 { margin-bottom: 25px; color: #4b5563; font-weight: 700; font-size: 1.6rem; text-align: center; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+    .result-box p { margin-bottom: 20px; font-weight: 500; }
+
+    .severity-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border-radius: 50px; font-weight: 600; font-size: 14px; }
+    .severity-high { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; }
+    .severity-medium { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; }
+    .severity-low { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; }
+
+    .disabled { pointer-events: none; opacity: 0.5; }
+
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
+      .main-content { margin-left: 0; width: 100%; padding: 1rem; }
+      .container { padding: 2rem; }
+      h1.title { font-size: 2rem; }
+    }
+
+    /* LANGUAGE & TOOLBAR STYLES */
+    .language-selector-container {
+      display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 1rem 2rem; border-radius: 16px; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3); justify-content: space-between;
+    }
+    .language-selector-container label { color: white; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; margin: 0; font-size: 14px; }
+    
+    .feature-toolbar {
+      display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      border-radius: 16px; padding: 12px 20px; margin-bottom: 24px; box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+    .feature-toolbar .toolbar-label { color: rgba(255,255,255,0.6); font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-right: 4px; }
+    
+    .tool-btn {
+      display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px; border-radius: 12px; border: none;
+      font-size: 13px; font-weight: 600; cursor: pointer; transition: all .25s ease; white-space: nowrap;
+    }
+    .tool-btn:focus { outline: none; }
+    
+    .tool-btn.mic-btn  { background: #3b82f6; color: white; }
+    .tool-btn.mic-btn:hover { background: #2563eb; transform: translateY(-1px); }
+    .tool-btn.mic-btn.recording { background: #ef4444; animation: pulse-red 1.2s infinite; }
+    
+    .tool-btn.speak-btn { background: #10b981; color: white; }
+    .tool-btn.speak-btn:hover { background: #059669; transform: translateY(-1px); }
+    .tool-btn.speak-btn.speaking { background: #f59e0b; animation: pulse-amber 1.2s infinite; color: white; }
+    
+    .tool-btn.stop-btn { background: #ef4444; color: white; display: none; }
+    .tool-btn.stop-btn:hover { background: #dc2626; }
+
+    @keyframes pulse-red {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    @keyframes pulse-amber {
+      0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2><i class="fas fa-user-md"></i> EpiSure</h2>
+    </div>
+    <a href="/dashboard" class="nav-link"><i class="fas fa-home"></i> Dashboard</a>
+    <a href="/show_severity" class="nav-link"><i class="fas fa-exclamation-triangle"></i> Show Severity</a>
+    <a href="/show_solutions" class="nav-link"><i class="fas fa-pills"></i> Show Solutions</a>
+    <a href="/suggest_doctor" class="nav-link"><i class="fas fa-stethoscope"></i> Suggest Doctor</a>
+    <a href="/take_test" class="nav-link"><i class="fas fa-clipboard-check"></i> Take Test</a>
+    <a href="/logout" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+  </div>
+
+  <div class="main-content">
+    <div class="container" id="main-content-container">
+      <h1 class="title">
+        <i class="fas fa-microscope"></i>
+        SKIN DISEASE DETECTION
+      </h1>
+
+      <!-- Language Translator Selector -->
+      <div class="language-selector-container">
+        <label><i class="fas fa-language"></i> Select Language:</label>
+        <div id="google_translate_element"></div>
+      </div>
+
+      <!-- Accessibility Feature Toolbar -->
+      <div class="feature-toolbar">
+        <span class="toolbar-label">Voice & Audio:</span>
+        <button class="tool-btn mic-btn" id="mic-btn" title="Click this, then speak to type text">
+          <i class="fas fa-microphone"></i> Dictate Text
+        </button>
+        <button class="tool-btn speak-btn" id="speak-btn">
+          <i class="fas fa-volume-up"></i> Read Results Loud
+        </button>
+        <button class="tool-btn stop-btn" id="stop-btn">
+          <i class="fas fa-stop"></i> Stop Reading
+        </button>
+      </div>
+
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for msg in messages %}
+            <div class="alert alert-info mt-3 diagnostic-result">
+              <i class="fas fa-info-circle"></i> {{ msg }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      {% if request.path == '/dashboard' %}
+      
+      <!-- PERFECTLY ALIGNED UPLOAD SECTION -->
+      <div class="upload-section">
+        <form action="/predict" method="POST" enctype="multipart/form-data" id="predict-form">
+          <div class="row align-items-stretch m-0">
+            
+            <!-- Left Side: File Upload -->
+            <div class="col-md-6 upload-col divider-col">
+              <h4 style="color: #374151; font-weight: 700; margin-bottom: 1.5rem;"><i class="fas fa-folder-open text-primary"></i> Upload File</h4>
+              <div class="form-group w-100 m-0">
+                <input type="file" name="file" id="file-input" class="form-control text-center" accept="image/*" required>
+              </div>
+              <p style="color: #64748b; font-size: 13px; margin-top: 15px; font-weight: 500;">Supported formats: JPG, PNG, JPEG</p>
+            </div>
+
+            <!-- Right Side: Camera Tools -->
+            <div class="col-md-6 upload-col">
+              <h4 style="color: #374151; font-weight: 700; margin-bottom: 1.5rem;"><i class="fas fa-camera text-success"></i> Use Web Camera</h4>
+              
+              <!-- Start Camera Button -->
+              <button type="button" id="start-camera-btn" class="btn btn-outline-secondary" style="border-radius: 12px; padding: 12px 25px; font-weight: 600; border-width: 2px;">
+                <i class="fas fa-video"></i> Start Camera
+              </button>
+              
+              <!-- Video Preview (Hidden by default) -->
+              <div id="camera-container" style="display: none; width: 100%;">
+                <video id="camera-video" autoplay playsinline style="width: 100%; max-width: 260px; border-radius: 16px; border: 3px solid #cbd5e1; box-shadow: 0 8px 25px rgba(0,0,0,0.1); display: block; margin: 0 auto;"></video>
+                <button type="button" id="snap-btn" class="btn btn-success mt-3" style="border-radius: 12px; padding: 10px 25px; font-weight: bold; box-shadow: 0 4px 15px rgba(16,185,129,0.3);">
+                  <i class="fas fa-camera-retro"></i> Snap Photo
+                </button>
+              </div>
+              
+              <!-- Canvas Preview of taken photo (Hidden by default) -->
+              <div id="canvas-container" style="display: none; width: 100%;">
+                <canvas id="camera-canvas" style="width: 100%; max-width: 260px; border-radius: 16px; border: 3px solid #10b981; box-shadow: 0 8px 25px rgba(16,185,129,0.25); display: block; margin: 0 auto;"></canvas>
+                <button type="button" id="retake-btn" class="btn btn-warning mt-3" style="border-radius: 12px; color: white; font-weight: bold; padding: 10px 25px; box-shadow: 0 4px 15px rgba(245,158,11,0.3);">
+                  <i class="fas fa-redo"></i> Retake Photo
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom Submit Button -->
+          <div class="text-center" style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid #e2e8f0;">
+            <button type="submit" class="btn btn-primary" style="padding: 1rem 4rem; font-size: 1.2rem; border-radius: 50px;">
+              <i class="fas fa-brain"></i> Analyze Image
+            </button>
+          </div>
+        </form>
+      </div>
+      {% endif %}
+
+      {% if file_path %}
+      <div class="uploaded-image mt-4">
+        <h3><i class="fas fa-image"></i> Uploaded Image:</h3>
+        <img src="{{ file_path }}" alt="Uploaded Image" class="img-fluid" style="max-width: 300px; border-radius: 12px;">
+      </div>
+      {% endif %}
+
+      {% if prediction_done %}
+      <div class="result mt-4 diagnostic-result">
+        <h3><i class="fas fa-diagnoses"></i> Prediction Result:</h3>
+        <p><strong><i class="fas fa-disease"></i> Disease Name:</strong> {{ class_name }}</p>
+        <p><strong><i class="fas fa-percentage"></i> Confidence Score:</strong> 
+          <span class="confidence-score"><i class="fas fa-check-circle"></i> {{ confidence_score }}%</span>
+        </p>
+      </div>
+      {% endif %}
+
+      {% if show_patient_form %}
+      <hr style="border: none; height: 2px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin: 2rem 0;">
+      <div class="patient-form">
+        <h3><i class="fas fa-user-plus"></i> Enter Patient Details</h3>
+        <p style="font-size: 13px; color: #666; margin-bottom: 15px;"><em>Tip: Click inside a box, then click "Dictate Text" above to speak your answer.</em></p>
+        <form action="/save_patient" method="POST">
+          <input type="hidden" name="prediction" value="{{ class_name }}">
+          <input type="hidden" name="confidence" value="{{ confidence_score }}">
+          <input type="hidden" name="image" value="{{ file_path.split('/')[-1] }}">
+
+          <div class="form-group">
+            <label><i class="fas fa-user"></i> Patient Name:</label>
+            <input type="text" name="name" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-map-marker-alt"></i> Address:</label>
+            <input type="text" name="address" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-phone"></i> Contact Number:</label>
+            <input type="text" name="contact" class="form-control" required>
+          </div>
+          <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Patient Data</button>
+        </form>
+      </div>
+      {% endif %}
+
+      {% if stage %}
+      <div class="result diagnostic-result">
+        <h3>Severity Stage:</h3>
+        <span class="severity-badge severity-{{ stage.lower() }}">{{ stage }}</span>
+      </div>
+      {% endif %}
+
+      {% if show_warning %}
+      <div class="alert alert-danger mt-4 diagnostic-result">
+        <i class="fas fa-exclamation-triangle"></i>
+        <strong>Warning:</strong> Severity is high. Please consult a doctor immediately.
+      </div>
+      {% endif %}
+
+      {% if diet or medicine %}
+      <div class="result diagnostic-result">
+        <h3><i class="fas fa-prescription"></i> Recommended Solutions:</h3>
+        <p><strong><i class="fas fa-utensils"></i> Diet:</strong> {{ diet }}</p>
+        <p><strong><i class="fas fa-pills"></i> Medicine:</strong> {{ medicine }}</p>
+      </div>
+      {% endif %}
+
+      {% if creams or lotions or soaps %}
+      <div class="result diagnostic-result">
+        <h3><i class="fas fa-pump-soap"></i> Recommended Skincare Products:</h3>
+        {% if creams %}
+          <div class="product-list">
+            <h5><i class="fas fa-tube"></i> Creams:</h5>
+            <ul>
+              {% for c in creams %}
+                <li><i class="fas fa-check-circle text-success"></i> <strong>{{ c.name }}</strong> (Brand: {{ c.brand }}) – {{ c.usage }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+        {% if lotions %}
+          <div class="product-list">
+            <h5><i class="fas fa-pump-medical"></i> Lotions:</h5>
+            <ul>
+              {% for l in lotions %}
+                <li><i class="fas fa-check-circle text-success"></i> <strong>{{ l.name }}</strong> (Brand: {{ l.brand }}) – {{ l.usage }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+        {% if soaps %}
+          <div class="product-list">
+            <h5><i class="fas fa-soap"></i> Soaps:</h5>
+            <ul>
+              {% for s in soaps %}
+                <li><i class="fas fa-check-circle text-success"></i> <strong>{{ s.name }}</strong> (Brand: {{ s.brand }}) – {{ s.usage }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      {% if selected_doctors %}
+      <div class="doctor-info diagnostic-result">
+        <h3><i class="fas fa-user-md"></i> Suggested Doctors:</h3>
+        {% for doctor in selected_doctors %}
+        <div class="doctor-card">
+          <p><i class="fas fa-user-md"></i> <strong>Name:</strong> {{ doctor.name }}</p>
+          <p><i class="fas fa-clinic-medical"></i> <strong>Clinic:</strong> {{ doctor.clinic }}</p>
+          <p><i class="fas fa-map-marker-alt"></i> <strong>Address:</strong> {{ doctor.address }}</p>
+          <p><i class="fas fa-phone"></i> <strong>Phone:</strong> {{ doctor.phone }}</p>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if show_take_test %}
+      <div class="test-form mt-5" id="take-test-form">
+        <h3><i class="fas fa-clipboard-list"></i> Skin Condition Self-Assessment</h3>
+        <form method="POST" action="/test_analysis">
+          <div class="form-group"><label>1. Is your skin dry?</label><select name="q1" class="form-control"><option>Yes</option><option>No</option></select></div>
+          <div class="form-group"><label>2. Do you have redness on your skin?</label><select name="q2" class="form-control"><option>Yes</option><option>No</option></select></div>
+          <div class="form-group"><label>3. Is there a burning sensation?</label><select name="q3" class="form-control"><option>Yes</option><option>No</option></select></div>
+          <div class="form-group"><label>4. Do you feel itching?</label><select name="q4" class="form-control"><option>Yes</option><option>No</option></select></div>
+          <div class="form-group"><label>5. Do you observe any rashes?</label><select name="q5" class="form-control"><option>Yes</option><option>No</option></select></div>
+          <button type="submit" class="btn btn-primary mt-2"><i class="fas fa-chart-line"></i> Submit and Analyze</button>
+        </form>
+      </div>
+      {% endif %}
+
+      {% if test_class_name == "No significant skin issue detected" %}
+      <div class="alert alert-success mt-4 diagnostic-result">
+        <i class="fas fa-check-circle"></i>
+        <strong>{{ test_class_name }}</strong><br>
+        You're currently not showing significant symptoms. Keep your skin clean and moisturized. No medical treatment is necessary.
+      </div>
+      {% elif recommended_medicine and recommended_soap and recommended_doctor %}
+      <div class="result-box diagnostic-result">
+        <h3>Test-Based Assessment Result</h3>
+        <div style="margin-bottom: 15px;"><strong>Disease Name:</strong> {{ test_class_name }}</div>
+        <div style="margin-bottom: 15px;"><strong>Recommended Medicine:</strong> {{ recommended_medicine }}</div>
+        <div style="margin-bottom: 15px;"><strong>Recommended Soap:</strong> {{ recommended_soap }}</div>
+        <div style="margin-bottom: 15px;"><strong>Suggested Doctor:</strong> {{ recommended_doctor }}</div>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+  <!-- DEPENDENCIES -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <!-- LANGUAGE PERSISTENCE ACROSS ALL PAGES & FORMS -->
+  <script>
+    // 1. When the page loads, immediately restore the saved language globally
+    const savedLang = localStorage.getItem('episure_lang');
+    if (savedLang) {
+      document.cookie = `googtrans=/en/${savedLang}; path=/`;
+    }
+
+    // 2. Continuously monitor if the user changes the language in the dropdown
+    setInterval(() => {
+      const match = document.cookie.match(/(^|;) ?googtrans=([^;]*)(;|$)/);
+      if (match) {
+        const parts = match[2].split('/');
+        if (parts.length > 2 && parts[2]) {
+          const currentLang = parts[2];
+          // If a new language is detected, save it and force it across the whole site
+          if (currentLang !== localStorage.getItem('episure_lang')) {
+            localStorage.setItem('episure_lang', currentLang);
+            document.cookie = `googtrans=/en/${currentLang}; path=/`; 
+          }
+        }
+      }
+    }, 500);
+  </script>
+
+  <!-- GOOGLE TRANSLATE INITIALIZATION -->
+  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script>
+    function googleTranslateElementInit() { 
+      new google.translate.TranslateElement({ 
+        pageLanguage: 'en', 
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE 
+      }, 'google_translate_element'); 
+    }
+
+    // ════════════════════════════════════════
+    // CAMERA CAPTURE FUNCTIONALITY
+    // ════════════════════════════════════════
+    document.addEventListener('DOMContentLoaded', function() {
+      const startCameraBtn = document.getElementById('start-camera-btn');
+      const cameraContainer = document.getElementById('camera-container');
+      const video = document.getElementById('camera-video');
+      const snapBtn = document.getElementById('snap-btn');
+      const canvasContainer = document.getElementById('canvas-container');
+      const canvas = document.getElementById('camera-canvas');
+      const retakeBtn = document.getElementById('retake-btn');
+      const fileInput = document.getElementById('file-input');
+      let stream = null;
+
+      if (startCameraBtn) {
+        startCameraBtn.addEventListener('click', async () => {
+          try {
+            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+            video.srcObject = stream;
+            startCameraBtn.style.display = 'none';
+            cameraContainer.style.display = 'block';
+            
+            fileInput.removeAttribute('required');
+            fileInput.value = ''; 
+          } catch (err) {
+            alert("Could not access the camera. Please make sure you have allowed camera permissions. Error: " + err.message);
+          }
+        });
+
+        fileInput.addEventListener('change', () => {
+             if(fileInput.value) fileInput.setAttribute('required', 'true');
+        });
+
+        snapBtn.addEventListener('click', () => {
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          const context = canvas.getContext('2d');
+          context.drawImage(video, 0, 0, canvas.width, canvas.height);
+          
+          canvas.toBlob((blob) => {
+            const file = new File([blob], "camera_capture.jpg", { type: "image/jpeg" });
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            fileInput.files = dataTransfer.files;
+            
+            if(stream) { stream.getTracks().forEach(track => track.stop()); }
+            cameraContainer.style.display = 'none';
+            canvasContainer.style.display = 'block';
+          }, "image/jpeg", 0.95);
+        });
+
+        retakeBtn.addEventListener('click', async () => {
+          canvasContainer.style.display = 'none';
+          fileInput.value = ''; 
+          
+          try {
+            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+            video.srcObject = stream;
+            cameraContainer.style.display = 'block';
+          } catch (err) {
+            alert("Could not access the camera: " + err.message);
+          }
+        });
+      }
+    });
+
+    // ════════════════════════════════════════
+    // ACCESSIBILITY: SPEECH & AUDIO
+    // ════════════════════════════════════════
+    document.addEventListener('DOMContentLoaded', function() {
+      const speakBtn = document.getElementById('speak-btn');
+      const stopBtn = document.getElementById('stop-btn');
+      const micBtn = document.getElementById('mic-btn');
+      
+      let synth = window.speechSynthesis;
+      let availableVoices = [];
+      
+      function populateVoices() { availableVoices = synth.getVoices(); }
+      populateVoices();
+      if (speechSynthesis.onvoiceschanged !== undefined) { speechSynthesis.onvoiceschanged = populateVoices; }
+
+      // Get language from our local storage backup
+      function getCurrentLanguage() {
+        return localStorage.getItem('episure_lang') || 'en';
+      }
+
+      if (speakBtn && stopBtn) {
+        speakBtn.addEventListener('click', () => {
+          if (synth.speaking) synth.cancel();
+
+          let textToRead = "";
+          const resultElements = document.querySelectorAll('.diagnostic-result, .alert-info');
+          
+          if (resultElements.length > 0) {
+            resultElements.forEach(el => {
+               textToRead += el.innerText.replace(/[\u200B-\u200D\uFEFF]/g, '') + ". ";
+            });
+          } else {
+            textToRead = "Welcome to the Skin Disease Detection dashboard. Please upload an image, use your camera, or take a self-assessment test.";
+          }
+
+          let utterance = new SpeechSynthesisUtterance(textToRead);
+          let targetLangCode = getCurrentLanguage();
+          utterance.lang = targetLangCode;
+          
+          if (availableVoices.length > 0) {
+            let matchingVoice = availableVoices.find(voice => voice.lang.startsWith(targetLangCode));
+            if (matchingVoice) { utterance.voice = matchingVoice; }
+          }
+
+          synth.speak(utterance);
+          speakBtn.classList.add('speaking'); speakBtn.style.display = 'none'; stopBtn.style.display = 'inline-flex';
+
+          utterance.onend = () => { speakBtn.classList.remove('speaking'); speakBtn.style.display = 'inline-flex'; stopBtn.style.display = 'none'; };
+          utterance.onerror = () => { speakBtn.classList.remove('speaking'); speakBtn.style.display = 'inline-flex'; stopBtn.style.display = 'none'; };
+        });
+
+        stopBtn.addEventListener('click', () => {
+          synth.cancel(); speakBtn.classList.remove('speaking'); speakBtn.style.display = 'inline-flex'; stopBtn.style.display = 'none';
+        });
+      }
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition && micBtn) {
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false; recognition.interimResults = false;
+
+        micBtn.addEventListener('click', () => {
+          recognition.lang = getCurrentLanguage();
+          recognition.start();
+          micBtn.classList.add('recording'); micBtn.innerHTML = '<i class="fas fa-microphone-slash"></i> Listening...';
+        });
+
+        recognition.onresult = (event) => {
+          const transcript = event.results[0][0].transcript;
+          const activeElement = document.activeElement;
+          if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA') && activeElement.type === 'text') {
+            activeElement.value = transcript;
+          } else {
+            alert("🎤 You said: \n\n" + transcript + "\n\n(Tip: Click inside a text box before clicking Dictate to type automatically!)");
+          }
+        };
+
+        recognition.onend = () => { micBtn.classList.remove('recording'); micBtn.innerHTML = '<i class="fas fa-microphone"></i> Dictate Text'; };
+        recognition.onerror = (event) => {
+          micBtn.classList.remove('recording'); micBtn.innerHTML = '<i class="fas fa-microphone"></i> Dictate Text';
+          if(event.error === 'not-allowed') { alert("Microphone access denied. Please allow microphone permissions."); }
+        };
+      } else if (micBtn) {
+        micBtn.style.display = 'none';
+      }
+    });
+
+    // ════════════════════════════════════════
+    // SIDEBAR FUNCTIONALITY
+    // ════════════════════════════════════════
+    function disableSidebarLinks() {
+      document.querySelectorAll('.nav-link').forEach(link => {
+        if (!link.href.includes('/logout')) { link.classList.add('disabled'); link.style.pointerEvents = 'none'; }
+      });
+    }
+
+    function enableSidebarLinks() {
+      document.querySelectorAll('.nav-link').forEach(link => { link.classList.remove('disabled'); link.style.pointerEvents = 'auto'; link.style.opacity = 1; });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const sidebarState = localStorage.getItem('sidebarEnabled');
+      if (sidebarState === 'true') { enableSidebarLinks(); } else { disableSidebarLinks(); }
+      if (window.location.pathname === "/logout") { localStorage.removeItem('sidebarEnabled'); }
+    });
+
+    const form = document.querySelector('form[action="/predict"]');
+    if (form) {
+      form.addEventListener('submit', function () { localStorage.setItem('sidebarEnabled', 'true'); });
+    }
+  </script>
+</body>
+</html>

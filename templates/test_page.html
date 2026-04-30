@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Skin Condition Questionnaire</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css"/>
+  <style>
+    body {
+      background: #f2f2f2;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      max-width: 600px;
+      background: white;
+      margin-top: 50px;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #007bff;
+    }
+    .btn-primary {
+      background-color: #007bff;
+      border: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Skin Condition Self-Assessment</h2>
+    <form method="POST" action="/test_analysis">
+      <div class="form-group">
+        <label>1. Is your skin dry?</label><br>
+        <select name="q1" class="form-control"><option>Yes</option><option>No</option></select>
+      </div>
+      <div class="form-group">
+        <label>2. Do you have redness on skin?</label><br>
+        <select name="q2" class="form-control"><option>Yes</option><option>No</option></select>
+      </div>
+      <div class="form-group">
+        <label>3. Is there a burning sensation?</label><br>
+        <select name="q3" class="form-control"><option>Yes</option><option>No</option></select>
+      </div>
+      <div class="form-group">
+        <label>4. Do you observe itching?</label><br>
+        <select name="q4" class="form-control"><option>Yes</option><option>No</option></select>
+      </div>
+      <div class="form-group">
+        <label>5. Do you have rashes?</label><br>
+        <select name="q5" class="form-control"><option>Yes</option><option>No</option></select>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Submit and Analyze</button>
+    </form>
+  </div>
+</body>
+</html>

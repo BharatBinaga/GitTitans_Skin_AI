@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+<style>
+        body {
+            background-image: url('../static/images/h5.png');
+            background-size: cover;
+            background-position: center;
+            font-family: 'Segoe UI', sans-serif;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding-left: 100px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .message-box {
+            margin-bottom: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #1b5e20;
+            background-color: #c8facc;
+            padding: 10px 20px;
+            border-radius: 6px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            text-align: center;
+        }
+
+        .form-box {
+            background: white;
+            padding: 25px 30px;
+            width: 350px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .form-box h2 {
+            color: red;
+            margin-bottom: 20px;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 250px;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #42a5f5;
+            border-radius: 5px;
+        }
+
+        input:focus {
+            border-color: #1565c0;
+            outline: none;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #42a5f5;
+            color: white;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1565c0;
+        }
+
+        a {
+            display: block;
+            margin-top: 12px;
+            color: #1565c0;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div class="message-box">
+              {% for message in messages %}
+                • {{ message }}
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <div class="form-box">
+            <h2>Login</h2>
+            <form method="POST">
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <a href="/forgot_password">Forgot Password?</a>
+            <a href="/register">Don't have an account? Register</a>
+        </div>
+    </div>
+
+    {% if redirect_dashboard %}
+    <script>
+        setTimeout(function() {
+            window.location.href = "/dashboard";
+        }, 2000);
+    </script>
+    {% endif %}
+       <script>
+      // 👇 This resets sidebar enablement every time login page is shown
+      localStorage.removeItem('sidebarEnabled');
+    </script>
+</body>
+</html>

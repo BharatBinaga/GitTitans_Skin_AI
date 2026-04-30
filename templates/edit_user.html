@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit User</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f0f2f5;
+            padding: 20px;
+        }
+        .form-box {
+            background: white;
+            max-width: 500px;
+            margin: auto;
+            padding: 30px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        .form-box h2 {
+            text-align: center;
+            color: #007bff;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="form-box">
+    <h2>Edit User</h2>
+    <form method="POST">
+        <label>Email</label>
+        <input type="text" name="email" value="{{ email }}" readonly>
+        <label>Username</label>
+        <input type="text" name="username" value="{{ username }}" required>
+        <label>Password</label>
+        <input type="password" name="password" value="{{ password }}" required>
+        <button type="submit">Update</button>
+    </form>
+</div>
+</body>
+</html>

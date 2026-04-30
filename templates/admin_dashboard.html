@@ -1,0 +1,143 @@
+<!-- templates/admin_dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Panel</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      background: #f4f7f9;
+    }
+    .sidebar {
+      width: 250px;
+      background-color: #343a40;
+      height: 100vh;
+      padding-top: 30px;
+      position: fixed;
+    }
+    .sidebar h2 {
+      color: white;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 26px;
+      font-weight: bold;
+    }
+    .sidebar a {
+      display: block;
+      padding: 15px 25px;
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
+      border-bottom: 1px solid #495057;
+    }
+    .sidebar a:hover {
+      background-color: #495057;
+    }
+    .main-content {
+      margin-left: 260px;
+      padding: 30px;
+      width: 100%;
+    }
+    .container {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+    }
+    h1.title {
+      font-size: 32px;
+      color: #007bff;
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #ddd;
+    }
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>Admin Panel</h2>
+    <a href="/show_patients">Show Patients Data</a>
+    <a href="/show_users">Show Users Data</a>
+    <a href="/logout">Logout</a>
+  </div>
+  <div class="main-content">
+    <div class="container">
+      
+      <!-- Google Translate Widget -->
+      <div id="google_translate_element" style="display: flex; justify-content: flex-end; margin-bottom: 20px;"></div>
+
+      <h1 class="title">{{ title }}</h1>
+
+      <!-- Stats Block -->
+      {% if title == 'Admin Dashboard' %}
+        <div style="display: flex; gap: 30px; justify-content: center; margin: 30px 0;">
+          <div style="background: #007bff; color: white; padding: 20px 30px; border-radius: 10px; font-size: 18px;">
+            <strong>Total Users:</strong> {{ user_count }}
+          </div>
+          <div style="background: #28a745; color: white; padding: 20px 30px; border-radius: 10px; font-size: 18px;">
+            <strong>Total Predictions:</strong> {{ prediction_count }}
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="table-responsive mt-4">
+        {% if users %}
+        <h2 style="margin-bottom: 15px;">Registered Users</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Password</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for u in users %}
+            <tr>
+              <td>{{ u.Username }}</td>
+              <td>{{ u.Email }}</td>
+              <td>{{ u.Password }}</td>
+              <td>
+                <a href="/edit_user/{{ u.Email }}" style="color: #007bff;">Edit</a> |
+                <a href="/delete_user/{{ u.Email }}" style="color: red;" onclick="return confirm('Are you sure you want to delete this user?')">Delete</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% elif table %}
+          {{ table|safe }}
+        {% else %}
+          
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Google Translate Scripts -->
+  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en', 
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+      }, 'google_translate_element'); 
+    }
+  </script>
+</body>
+</html>

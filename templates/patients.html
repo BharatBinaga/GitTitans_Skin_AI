@@ -1,0 +1,41 @@
+<!-- patients.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Patient Records</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+    <h2>All Patient Records</h2>
+    <a href="/dashboard" class="btn btn-secondary mb-3">Back to Dashboard</a>
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+        <tr>
+            <th>Date</th>
+            <th>Patient Name</th>
+            <th>Address</th>
+            <th>Contact</th>
+            <th>Image</th>
+            <th>Disease</th>
+            <th>Confidence</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for row in patients %}
+            <tr>
+                <td>{{ row['Date'] }}</td>
+                <td>{{ row['Patient Name'] }}</td>
+                <td>{{ row['Patient Address'] }}</td>
+                <td>{{ row['Patient Contact'] }}</td>
+                <td>{{ row['Image'] }}</td>
+                <td>{{ row['Predicted Disease'] }}</td>
+                <td>{{ row['Confidence Score'] }}%</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
