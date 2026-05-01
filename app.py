@@ -37,6 +37,7 @@ data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
 UPLOAD_FOLDER = 'static/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+
 # Doctor data
 doctors = [
     {
@@ -343,8 +344,19 @@ def suggest_doctor():
     file_path = session.get('uploaded_image_path')  # this was set in /predict
     return render_template('index.html',
                            selected_doctors=random.sample(doctors, 2),
+                           all_doctors=doctors,
                            file_path=file_path,
                            prediction_done=False)
+
+@app.route('/all_doctors')
+def all_doctors_view():
+    """Display all doctor locations on a map"""
+    return render_template('doctors_map.html', doctors=doctors)
+
+@app.route('/api/doctors')
+def api_doctors():
+    """API endpoint to get all doctors in JSON format"""
+    return jsonify(doctors)
 
 @app.route('/take_test')
 def take_test():
