@@ -4,7 +4,7 @@
 3 Eczema
 4 MelanocyticNevi
 5 Melanoma
-6 Psoriasis
+6 Psoriasis      
 7 SeborrheicKeratoses
 8 TineaRingwormCandidiasis
 9 WartsMolluscum
