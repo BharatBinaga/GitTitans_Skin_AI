@@ -5,7 +5,7 @@ import numpy as np
 import os
 import random
 import pandas as pd
-import mysql.connector
+import mysql.connector           
 from datetime import datetime
 from urllib.parse import unquote
 # from google.cloud import translate_v2clear
