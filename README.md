@@ -1,1 +1,1 @@
-this is my repo
+this repositery contains Skin Disease detection project
